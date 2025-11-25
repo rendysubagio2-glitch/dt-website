@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Member Dashboard - progressiv.id</title>
+    <style>
+        /* --- PREMIUM DASHBOARD THEME --- */
+        :root {
+            --primary: #E65100; 
+            --gold: #FFD700;
+            --dark-bg: #121212;
+            --panel-bg: #1E1E1E;
+            --text-main: #ECEFF1;
+            --text-muted: #B0BEC5;
+            --success: #00C853;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--dark-bg); color: var(--text-main); display: flex; min-height: 100vh; }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 250px;
+            background: #000;
+            padding: 2rem;
+            border-right: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100%;
+        }
+
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); margin-bottom: 3rem; letter-spacing: -0.5px; }
+        
+        .menu-item {
+            padding: 15px;
+            color: var(--text-muted);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-radius: 10px;
+            margin-bottom: 5px;
+            transition: 0.3s;
+        }
+        
+        .menu-item:hover, .menu-item.active { background: #333; color: var(--gold); }
+        .menu-item.logout { margin-top: auto; color: #ff5252; }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            flex: 1;
+            margin-left: 250px; /* Lebar sidebar */
+            padding: 2rem 3rem;
+        }
+
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        h2 { font-size: 1.8rem; }
+        .user-info { display: flex; align-items: center; gap: 15px; }
+        .avatar { width: 40px; height: 40px; background: var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: black; font-weight: bold; }
+
+        /* --- GRID LAYOUT --- */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        /* --- CARDS --- */
+        .card { background: var(--panel-bg); border-radius: 15px; padding: 1.5rem; border: 1px solid #333; margin-bottom: 20px; }
+        .card h3 { color: var(--gold); margin-bottom: 1rem; font-size: 1.1rem; display: flex; justify-content: space-between; }
+
+        /* --- HABIT TRACKER --- */
+        .habit-list { display: flex; gap: 15px; }
+        .habit-item { 
+            background: #2c2c2c; padding: 10px 15px; border-radius: 8px; flex: 1; 
+            display: flex; align-items: center; gap: 10px; cursor: pointer; transition: 0.3s;
+        }
+        .habit-item.completed { background: rgba(0, 200, 83, 0.2); border: 1px solid var(--success); }
+        .habit-checkbox { width: 20px; height: 20px; accent-color: var(--success); cursor: pointer; }
+
+        /* --- MEAL PLAN CONTROLLER --- */
+        .meal-row { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #333; align-items: center; }
+        .meal-time { color: var(--text-muted); font-size: 0.9rem; width: 80px; }
+        .meal-detail { flex: 1; font-weight: 500; }
+        .btn-edit { background: none; border: none; color: var(--primary); cursor: pointer; font-size: 0.8rem; }
+
+        /* --- WORKOUT LOGGER --- */
+        .input-group { margin-bottom: 10px; }
+        .input-group input { width: 100%; padding: 10px; background: #2c2c2c; border: 1px solid #444; color: white; border-radius: 5px; }
+        .btn-log { width: 100%; padding: 10px; background: var(--gold); color: black; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .log-history { margin-top: 15px; max-height: 150px; overflow-y: auto; font-size: 0.9rem; }
+        .log-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #444; }
+
+        /* --- SIMPLE GRAPH (CSS ONLY) --- */
+        .chart-container { display: flex; align-items: flex-end; justify-content: space-between; height: 150px; padding-top: 20px; }
+        .bar-col { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .bar { width: 30px; background: var(--primary); border-radius: 5px 5px 0 0; transition: height 1s; }
+        .bar-label { font-size: 0.7rem; color: #777; }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: relative; padding: 1rem; flex-direction: row; overflow-x: auto; }
+            .main-content { margin-left: 0; padding: 1rem; }
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .logo { margin-bottom: 0; margin-right: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="logo">progressiv.id</div>
+        <a href="#" class="menu-item active">📊 Overview</a>
+        <a href="#" class="menu-item">🍱 Meal Plan</a>
+        <a href="#" class="menu-item">💪 Workout Log</a>
+        <a href="#" class="menu-item">⚙️ Settings</a>
+        <a href="index.html" class="menu-item logout">← Logout</a>
+    </nav>
+
+    <main class="main-content">
+        <header>
+            <div>
+                <h2 id="welcome-msg">Welcome, Rendy!</h2>
+                <p style="color:var(--text-muted)">Week 4 of Bulk Program</p>
+            </div>
+            <div class="user-info">
+                <div style="text-align: right;">
+                    <span style="display:block; font-weight:bold;">Rendy S.</span>
+                    <span style="font-size:0.8rem; color:var(--gold);">Premium Member</span>
+                </div>
+                <div class="avatar">RS</div>
+            </div>
+        </header>
+
+        <div class="dashboard-grid">
+            
+            <div class="col-left">
+                
+                <div class="card">
+                    <h3>Daily Habits <span style="font-size:0.8rem; color:var(--success)">2/3 Done</span></h3>
+                    <div class="habit-list">
+                        <label class="habit-item completed">
+                            <input type="checkbox" class="habit-checkbox" checked> 💧 3L Water
+                        </label>
+                        <label class="habit-item completed">
+                            <input type="checkbox" class="habit-checkbox" checked> 💊 Creatine
+                        </label>
+                        <label class="habit-item">
+                            <input type="checkbox" class="habit-checkbox"> 😴 8h Sleep
+                        </label>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Weight Progress (kg)</h3>
+                    <div class="chart-container">
+                        <div class="bar-col"><div class="bar" style="height: 40%; background:#444;"></div><span class="bar-label">Week 1</span></div>
+                        <div class="bar-col"><div class="bar" style="height: 55%; background:#555;"></div><span class="bar-label">Week 2</span></div>
+                        <div class="bar-col"><div class="bar" style="height: 70%; background:#666;"></div><span class="bar-label">Week 3</span></div>
+                        <div class="bar-col"><div class="bar" style="height: 85%;"></div><span class="bar-label">Week 4</span></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Today's Meal Plan (3.200 kcal) 
+                        <button style="background:none; border:1px solid #555; color:#aaa; padding:2px 8px; border-radius:5px; cursor:pointer;">Generate List</button>
+                    </h3>
+                    <div id="meal-container">
+                        <div class="meal-row">
+                            <span class="meal-time">Breakfast</span>
+                            <span class="meal-detail">Oatmeal + 2 Scoop Whey + Pisang</span>
+                            <button class="btn-edit" onclick="editMeal(this)">✏️</button>
+                        </div>
+                        <div class="meal-row">
+                            <span class="meal-time">Lunch</span>
+                            <span class="meal-detail">200g Dada Ayam + 200g Nasi Putih</span>
+                            <button class="btn-edit" onclick="editMeal(this)">✏️</button>
+                        </div>
+                        <div class="meal-row">
+                            <span class="meal-time">Snack</span>
+                            <span class="meal-detail">Roti Gandum + Selai Kacang</span>
+                            <button class="btn-edit" onclick="editMeal(this)">✏️</button>
+                        </div>
+                        <div class="meal-row">
+                            <span class="meal-time">Dinner</span>
+                            <span class="meal-detail">150g Daging Sapi + Kentang Rebus</span>
+                            <button class="btn-edit" onclick="editMeal(this)">✏️</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-right">
+                
+                <div class="card" style="border-top: 3px solid var(--primary);">
+                    <h3>Log Workout</h3>
+                    <div class="input-group">
+                        <input type="text" id="ex-name" placeholder="Nama Latihan (e.g. Bench Press)">
+                    </div>
+                    <div class="input-group" style="display:flex; gap:10px;">
+                        <input type="number" id="ex-weight" placeholder="Beban (kg)">
+                        <input type="number" id="ex-reps" placeholder="Reps">
+                    </div>
+                    <button class="btn-log" onclick="addLog()">Catat Set</button>
+                    
+                    <div class="log-history" id="log-list">
+                        <div class="log-item">
+                            <span>Squat</span>
+                            <span style="color:var(--gold)">60kg x 10</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Coach Notes 💬</h3>
+                    <p style="font-size:0.9rem; color:#ccc; font-style:italic;">
+                        "Minggu ini fokus di teknik Squat kamu ya, jangan terlalu bungkuk. Naikkan karbo sedikit di hari latihan kaki."
+                    </p>
+                    <div style="margin-top:10px; text-align:right;">
+                        <small style="color:#666;">- Coach Ray</small>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        /* Di file dashboard.html (Masukkan di dalam tag <script>) */
+
+// Cek apakah ada nama tersimpan di LocalStorage
+const savedName = localStorage.getItem('memberName');
+
+// Jika ada, ganti tulisan "Welcome, Rendy!" dengan nama asli pendaftar
+if (savedName) {
+    // Update Judul Besar
+    document.getElementById('welcome-msg').innerText = "Welcome, " + savedName.split(" ")[0] + "!";
+    
+    // Update Info User di pojok kanan
+    const userContainer = document.querySelector('.user-info div');
+    userContainer.querySelector('span:first-child').innerText = savedName;
+    
+    // Update Inisial Avatar (Misal: RS)
+    const initials = savedName.match(/\b\w/g) || [];
+    const initialText = ((initials.shift() || '') + (initials.pop() || '')).toUpperCase();
+    document.querySelector('.avatar').innerText = initialText;
+}
+
+        // 1. Simpel Toggle Habit Style
+        const checkboxes = document.querySelectorAll('.habit-checkbox');
+        checkboxes.forEach(box => {
+            box.addEventListener('change', function() {
+                if(this.checked) {
+                    this.parentElement.classList.add('completed');
+                } else {
+                    this.parentElement.classList.remove('completed');
+                }
+            });
+        });
+
+        // 2. Workout Logger Logic
+        function addLog() {
+            const name = document.getElementById('ex-name').value;
+            const weight = document.getElementById('ex-weight').value;
+            const reps = document.getElementById('ex-reps').value;
+            const list = document.getElementById('log-list');
+
+            if(name && weight && reps) {
+                const item = document.createElement('div');
+                item.className = 'log-item';
+                item.innerHTML = `<span>${name}</span> <span style="color:var(--gold)">${weight}kg x ${reps}</span>`;
+                
+                // Add to top
+                list.insertBefore(item, list.firstChild);
+
+                // Clear input
+                document.getElementById('ex-weight').value = '';
+                document.getElementById('ex-reps').value = '';
+            } else {
+                alert("Isi data latihan dulu, Bro!");
+            }
+        }
+
+        // 3. Edit Meal Logic (Simulasi)
+        function editMeal(btn) {
+            const detailSpan = btn.parentElement.querySelector('.meal-detail');
+            const currentText = detailSpan.innerText;
+            
+            const newText = prompt("Ubah menu makanan:", currentText);
+            
+            if (newText) {
+                detailSpan.innerText = newText;
+                // Visual feedback
+                detailSpan.style.color = "var(--gold)";
+                setTimeout(() => detailSpan.style.color = "var(--text-main)", 1000);
+            }
+        }
+    </script>
+</body>
+</html>
