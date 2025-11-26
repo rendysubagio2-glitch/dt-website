@@ -3,420 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>progressiv.id - Personalized Gain Plan</title>
+    <title>Join Pro Squad - progressiv.id</title>
     <style>
-        /* --- CSS VARIABLES & RESET --- */
         :root {
-            --primary: #E65100; 
-            --secondary: #00796B; 
-            --accent: #FFD600;
-            --danger: #d32f2f;
-            --dark: #263238;
-            --light: #F5F5F5;
-            --white: #FFFFFF;
-            --bg-input: rgba(255,255,255,0.1);
+            --primary: #E65100;
+            --gold: #FFD700;
+            --dark-bg: #121212;
+            --input-bg: #1E1E1E;
+            --text-light: #ECEFF1;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background-color: var(--light); color: var(--dark); line-height: 1.6; scroll-behavior: smooth; }
+        body { background-color: var(--dark-bg); color: var(--text-light); height: 100vh; display: flex; overflow: hidden; }
 
-        /* --- HEADER --- */
-        header { background: var(--white); padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
-        .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); letter-spacing: -0.5px; }
-        nav a { text-decoration: none; color: var(--dark); margin-left: 20px; font-weight: 500; transition: color 0.3s; }
-        nav a:hover { color: var(--primary); }
-
-        /* --- HERO SECTION --- */
-        .hero { display: flex; align-items: center; justify-content: space-between; padding: 4rem 5%; background: linear-gradient(135deg, #FFF3E0 0%, #FFFFFF 100%); min-height: 80vh; }
-        .hero-text { flex: 1; padding-right: 2rem; }
-        .hero-text h1 { font-size: 3rem; margin-bottom: 1rem; color: var(--dark); }
-        .hero-text span { color: var(--primary); }
-        .hero-text p { font-size: 1.1rem; margin-bottom: 2rem; color: #546E7A; }
-        .cta-btn { background-color: var(--primary); color: var(--white); padding: 15px 30px; border-radius: 50px; text-decoration: none; font-weight: 700; box-shadow: 0 4px 15px rgba(230, 81, 0, 0.3); transition: transform 0.2s; display: inline-block; }
-        .cta-btn:hover { transform: translateY(-3px); background-color: #BF360C; }
-        
-        /* --- CALCULATOR SECTION --- */
-        .calculator-section { background-color: var(--dark); color: var(--white); padding: 4rem 5%; text-align: center; }
-        .calc-box { background: var(--bg-input); max-width: 500px; margin: 2rem auto; padding: 2rem; border-radius: 15px; text-align: left; }
-        label { font-size: 0.9rem; color: #ddd; margin-bottom: 5px; display: block; margin-top: 15px; }
-        .form-group { margin-bottom: 10px; }
-        input, select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #555; background: #37474F; color: white; font-size: 1rem; outline: none; }
-        input:focus, select:focus { border-color: var(--primary); }
-        .row-input { display: flex; gap: 15px; }
-        .col { flex: 1; }
-        .calc-btn { width: 100%; padding: 15px; background-color: var(--secondary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 25px; font-size: 1.1rem; transition: background 0.3s; }
-        .calc-btn:hover { background-color: #004D40; }
-
-        /* Result Box */
-        #result-box { display: none; margin-top: 30px; padding: 20px; background: var(--white); color: var(--dark); border-radius: 10px; text-align: center; animation: fadeIn 0.5s; }
-        #result-calories { font-size: 2.5rem; font-weight: 800; color: var(--primary); margin: 5px 0; }
-        .prediction-box { background: #E0F2F1; padding: 15px; border-radius: 8px; margin-top: 15px; color: #004D40; border: 1px solid #00796B; }
-        .macro-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 15px; text-align: center; }
-        .macro-item { background: #f9f9f9; padding: 10px; border-radius: 5px; font-size: 0.9rem; }
-        .macro-val { font-weight: bold; display: block; font-size: 1.1rem; color: var(--dark); }
-
-        /* --- FOOD GUIDE & ALLERGY FILTER STYLES --- */
-        .section-title { text-align: center; margin-bottom: 10px; font-size: 2rem; color: var(--dark); }
-        .section-desc { text-align: center; color: #666; margin-bottom: 3rem; }
-        .common-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; padding: 0 5%; }
-
-        .food-guide { padding: 4rem 0; background: var(--white); }
-        
-        /* Allergy Filter Box */
-        .allergy-box {
-            background: #FFF3E0;
-            border: 1px solid #FFCCBC;
-            margin: 0 5% 2rem 5%;
-            padding: 1.5rem;
-            border-radius: 10px;
-            text-align: center;
+        /* --- LEFT SIDE (VISUAL) --- */
+        .split-left {
+            flex: 1;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=1000&auto=format&fit=crop'); 
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 4rem;
         }
-        .allergy-box h4 { margin-bottom: 15px; color: var(--primary); }
-        .filter-options { display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
-        .checkbox-label { cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 500; user-select: none; }
-        .checkbox-label input { width: auto; margin: 0; cursor: pointer; }
 
-        /* Food Cards & Interaction */
-        .food-card { background: var(--light); padding: 2rem; border-radius: 15px; border-top: 5px solid #ccc; text-align: left; transition: transform 0.3s; }
-        .food-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        .food-card h3 { margin-bottom: 1.5rem; font-size: 1.3rem; }
-        .food-card ul { list-style: none; }
-        
-        .food-item { margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s; }
-        
-        /* RESTRICTED ITEM STYLE */
-        .food-item.restricted { opacity: 0.3; text-decoration: line-through; background-color: #ffebee; padding-left: 10px; padding-right: 10px; border-radius: 4px; }
-        
-        .badge { font-size: 0.75rem; padding: 3px 8px; border-radius: 4px; background: #ddd; font-weight: bold; }
-        .card-protein { border-color: var(--primary); }
-        .card-carbs { border-color: var(--accent); }
-        .card-fats { border-color: var(--secondary); }
+        .split-left h1 { font-size: 3.5rem; line-height: 1.2; margin-bottom: 1rem; color: white; }
+        .split-left span { color: var(--gold); }
+        .split-left p { font-size: 1.2rem; color: #ccc; max-width: 500px; }
 
-        /* --- WORKOUT SECTION --- */
-        .workout-section { padding: 4rem 0; background: #ECEFF1; }
-        .workout-card { background: var(--white); border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: transform 0.3s; }
-        .workout-card:hover { transform: translateY(-5px); }
-        .workout-header { padding: 1.5rem; color: white; text-align: center; }
-        .bg-push { background: linear-gradient(45deg, #FF5252, #D32F2F); }
-        .bg-pull { background: linear-gradient(45deg, #448AFF, #1976D2); }
-        .bg-legs { background: linear-gradient(45deg, #69F0AE, #388E3C); }
-        .workout-header h3 { font-size: 1.5rem; margin-bottom: 5px; }
-        .exercise-list { padding: 1.5rem; }
-        .exercise-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed #ccc; }
-        .exercise-item:last-child { border-bottom: none; }
-        .ex-name { font-weight: 600; color: var(--dark); display: block; }
-        .ex-detail { font-size: 0.85rem; color: #78909C; }
-        .set-reps { font-weight: bold; color: var(--primary); font-size: 0.9rem; background: #FFF3E0; padding: 5px 10px; border-radius: 5px; }
+        /* --- RIGHT SIDE (FORM) --- */
+        .split-right {
+            flex: 0.8;
+            background: var(--dark-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 4rem;
+            position: relative;
+        }
 
-        @media (max-width: 768px) { .hero { flex-direction: column; text-align: center; } .hero-text { padding-right: 0; } }
+        .back-btn { position: absolute; top: 30px; left: 40px; text-decoration: none; color: #777; font-size: 0.9rem; transition: 0.3s; }
+        .back-btn:hover { color: var(--gold); }
+
+        .form-container { max-width: 400px; margin: 0 auto; width: 100%; }
+        .form-header { margin-bottom: 2rem; }
+        .form-header h2 { font-size: 2rem; margin-bottom: 5px; }
+        .form-header p { color: #777; font-size: 0.9rem; }
+
+        .input-group { margin-bottom: 1.5rem; }
+        .input-group label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: #aaa; }
+        .input-group input, .input-group select {
+            width: 100%; padding: 15px; border-radius: 8px; border: 1px solid #333;
+            background: var(--input-bg); color: white; font-size: 1rem; outline: none; transition: 0.3s;
+        }
+        .input-group input:focus { border-color: var(--gold); box-shadow: 0 0 10px rgba(255, 215, 0, 0.1); }
+
+        .btn-submit {
+            width: 100%; padding: 15px; background: linear-gradient(45deg, var(--primary), #FF6D00);
+            color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer;
+            transition: 0.3s; margin-top: 10px;
+        }
+        .btn-submit:hover { transform: translateY(-2px); shadow: 0 5px 20px rgba(230, 81, 0, 0.4); }
+
+        /* --- LOADING OVERLAY --- */
+        .loader-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(18, 18, 18, 0.9); display: none;
+            justify-content: center; align-items: center; flex-direction: column;
+        }
+        .spinner {
+            width: 50px; height: 50px; border: 5px solid #333; border-top: 5px solid var(--gold);
+            border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Mobile Responsive */
+        @media (max-width: 900px) {
+            body { flex-direction: column; height: auto; overflow-y: auto; }
+            .split-left { padding: 3rem; min-height: 300px; }
+            .split-left h1 { font-size: 2.5rem; }
+            .split-right { padding: 3rem 2rem; }
+        }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo">progressiv.id</div>
-        <nav>
-            <a href="#kalkulator">Hitung</a>
-            <a href="#food-guide">Nutrisi</a>
-            <a href="#workout">Latihan</a>
-        </nav>
-    </header>
+    <div class="split-left">
+        <h1>Commit to the <br><span>Process.</span></h1>
+        <p>Bergabung dengan 1,500+ member lainnya yang telah berhasil mengubah fisik mereka.</p>
+    </div>
 
-    <section class="hero">
-        <div class="hero-text">
-            <h1>Plan Your Gain <br><span>Execute The Goal</span></h1>
-            <p>Platform lengkap untuk menaikkan berat badan: Hitung kalori, pilih nutrisi aman alergi, dan eksekusi latihan.</p>
-            <a href="#kalkulator" class="cta-btn">Mulai Hitung</a>
-        </div>
-        <div class="hero-image" style="flex:1; display:flex; justify-content:center;">
-            <div style="background:white; padding:2rem; border-radius:20px; box-shadow:0 10px 30px rgba(0,0,0,0.1); text-align:center; border:2px solid var(--secondary);">
-                <h3>Target Tercapai?</h3>
-                <div style="font-size:3rem;">🚀</div>
-                <p>Let's find out when.</p>
-            </div>
-        </div>
-    </section>
+    <div class="split-right">
+        <a href="premium.html" class="back-btn">← Kembali</a>
 
-    <section id="kalkulator" class="calculator-section">
-        <h2>Kalkulator Target & Durasi</h2>
-        <p>Langkah 1: Ketahui angka kebutuhan tubuh Anda.</p>
-        
-        <div class="calc-box">
-            <div class="form-group">
-                <label>Jenis Kelamin</label>
-                <select id="gender">
-                    <option value="male">Pria</option>
-                    <option value="female">Wanita</option>
-                </select>
+        <div class="form-container">
+            <div class="form-header">
+                <h2>Buat Akun Pro</h2>
+                <p>Mulai perjalanan transformasi Anda hari ini.</p>
             </div>
 
-            <div class="row-input">
-                <div class="col">
-                    <label>Berat Sekarang (kg)</label>
-                    <input type="number" id="weight" placeholder="50">
-                </div>
-                <div class="col">
-                    <label style="color:var(--primary); font-weight:bold;">Target Berat (kg)</label>
-                    <input type="number" id="target-weight" placeholder="65" style="border-color:var(--primary);">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Tinggi Badan (cm)</label>
-                <input type="number" id="height" placeholder="170">
-            </div>
-
-            <div class="form-group">
-                <label>Usia (tahun)</label>
-                <input type="number" id="age" placeholder="20">
-            </div>
-
-            <div class="form-group">
-                <label>Tingkat Aktivitas</label>
-                <select id="activity">
-                    <option value="1.2">Sedenter (Jarang Olahraga)</option>
-                    <option value="1.375">Ringan (Olahraga 1-3x/minggu)</option>
-                    <option value="1.55">Sedang (Olahraga 3-5x/minggu)</option>
-                    <option value="1.725">Berat (Olahraga 6-7x/minggu)</option>
-                </select>
-            </div>
-
-            <button class="calc-btn" onclick="calculateAll()">Hitung Rencana</button>
-
-            <div id="result-box">
-                <h3>Target Kalori Harian</h3>
-                <div id="result-calories">0 kcal</div>
-                <p style="font-size:0.9rem; color:#666;">(Surplus +500 Kalori)</p>
-
-                <div class="prediction-box">
-                    <h4>📅 Estimasi Waktu</h4>
-                    <p>Untuk naik <strong id="diff-kg">0</strong> kg, Anda butuh waktu sekitar:</p>
-                    <h2 id="duration-text" style="margin:10px 0;">0 Minggu</h2>
-                    <small>*Asumsi konsisten surplus setiap hari.</small>
+            <form id="regForm" onsubmit="handleRegister(event)">
+                <div class="input-group">
+                    <label>Nama Lengkap</label>
+                    <input type="text" id="fullname" placeholder="Contoh: Rendy Subagio" required>
                 </div>
 
-                <div class="macro-grid">
-                    <div class="macro-item">Protein <span id="macro-p" class="macro-val">0g</span></div>
-                    <div class="macro-item">Karbo <span id="macro-c" class="macro-val">0g</span></div>
-                    <div class="macro-item">Lemak <span id="macro-f" class="macro-val">0g</span></div>
+                <div class="input-group">
+                    <label>Email Address</label>
+                    <input type="email" id="email" placeholder="nama@email.com" required>
                 </div>
-                
-                <div style="margin-top: 20px;">
-                    <a href="#food-guide" style="color: var(--primary); font-weight: bold; font-size: 0.9rem;">Lihat Menu & Latihan ↓</a>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <section id="food-guide" class="food-guide">
-        <h2 class="section-title">Nutrisi (Fuel)</h2>
-        <p class="section-desc">Langkah 2: Pilih bahan bakar. Gunakan filter jika Anda memiliki alergi.</p>
-        
-        <div class="allergy-box">
-            <h4>⛔ Filter Alergi Saya:</h4>
-            <div class="filter-options">
-                <label class="checkbox-label">
-                    <input type="checkbox" onchange="filterFoods()" value="dairy"> 🥛 Intoleransi Laktosa (Susu)
-                </label>
-                <label class="checkbox-label">
-                    <input type="checkbox" onchange="filterFoods()" value="nuts"> 🥜 Alergi Kacang
-                </label>
-                <label class="checkbox-label">
-                    <input type="checkbox" onchange="filterFoods()" value="gluten"> 🍞 Gluten Free
-                </label>
-                <label class="checkbox-label">
-                    <input type="checkbox" onchange="filterFoods()" value="seafood"> 🍤 Alergi Seafood
-                </label>
-            </div>
+                <div class="input-group">
+                    <label>Target Utama</label>
+                    <select id="goal">
+                        <option value="bulk">Bulking (Naik Berat Badan)</option>
+                        <option value="lean">Lean Bulk (Otot Kering)</option>
+                        <option value="strength">Strength (Kekuatan)</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="password" placeholder="Minimal 8 karakter" required>
+                </div>
+
+                <button type="submit" class="btn-submit">Akses Dashboard &rarr;</button>
+            </form>
         </div>
 
-        <div class="common-grid">
-            <div class="food-card card-protein">
-                <h3 style="color:var(--primary);">🍗 Protein Sources</h3>
-                <ul>
-                    <li class="food-item"><span>Dada Ayam</span><span class="badge" style="color:var(--primary); background:#FFCCBC;">Safe</span></li>
-                    <li class="food-item"><span>Daging Sapi</span><span class="badge" style="color:var(--primary); background:#FFCCBC;">Safe</span></li>
-                    <li class="food-item" data-allergy="seafood"><span>Ikan Tuna/Salmon</span><span class="badge" style="color:var(--primary); background:#FFCCBC;">Seafood</span></li>
-                    <li class="food-item" data-allergy="seafood"><span>Udang</span><span class="badge" style="color:var(--primary); background:#FFCCBC;">Seafood</span></li>
-                    <li class="food-item"><span>Telur Utuh</span><span class="badge" style="color:var(--primary); background:#FFCCBC;">Gold Std</span></li>
-                    <li class="food-item"><span>Tempe/Tahu</span><span class="badge" style="color:var(--primary); background:#FFCCBC;">Vegan</span></li>
-                </ul>
-            </div>
-
-            <div class="food-card card-carbs">
-                <h3 style="color:#F9A825;">🍚 Carb Sources</h3>
-                <ul>
-                    <li class="food-item"><span>Nasi Putih</span><span class="badge" style="color:#F57F17; background:#FFF9C4;">Safe</span></li>
-                    <li class="food-item" data-allergy="gluten"><span>Oatmeal</span><span class="badge" style="color:#F57F17; background:#FFF9C4;">Gluten?</span></li>
-                    <li class="food-item" data-allergy="gluten"><span>Pasta/Spaghetti</span><span class="badge" style="color:#F57F17; background:#FFF9C4;">Gluten</span></li>
-                    <li class="food-item" data-allergy="gluten"><span>Roti Gandum</span><span class="badge" style="color:#F57F17; background:#FFF9C4;">Gluten</span></li>
-                    <li class="food-item"><span>Kentang/Ubi</span><span class="badge" style="color:#F57F17; background:#FFF9C4;">Safe</span></li>
-                    <li class="food-item"><span>Pisang</span><span class="badge" style="color:#F57F17; background:#FFF9C4;">Safe</span></li>
-                </ul>
-            </div>
-
-            <div class="food-card card-fats">
-                <h3 style="color:var(--secondary);">🥑 Healthy Fats</h3>
-                <ul>
-                    <li class="food-item" data-allergy="nuts"><span>Selai Kacang</span><span class="badge" style="color:var(--secondary); background:#B2DFDB;">Nut</span></li>
-                    <li class="food-item" data-allergy="nuts"><span>Kacang Almond/Mete</span><span class="badge" style="color:var(--secondary); background:#B2DFDB;">Nut</span></li>
-                    <li class="food-item"><span>Alpukat</span><span class="badge" style="color:var(--secondary); background:#B2DFDB;">Safe</span></li>
-                    <li class="food-item"><span>Olive Oil</span><span class="badge" style="color:var(--secondary); background:#B2DFDB;">Safe</span></li>
-                    <li class="food-item" data-allergy="dairy"><span>Susu Full Cream</span><span class="badge" style="color:var(--secondary); background:#B2DFDB;">Dairy</span></li>
-                    <li class="food-item" data-allergy="dairy"><span>Keju</span><span class="badge" style="color:var(--secondary); background:#B2DFDB;">Dairy</span></li>
-                </ul>
-            </div>
+        <div class="loader-overlay" id="loader">
+            <div class="spinner"></div>
+            <p style="color:var(--gold);">Menyiapkan Plan Anda...</p>
         </div>
-    </section>
-
-    <section id="workout" class="workout-section">
-        <h2 class="section-title">Program Latihan (PPL)</h2>
-        <p class="section-desc">Langkah 3: Ubah kalori menjadi otot dengan metode <strong>Push / Pull / Legs</strong>.</p>
-
-        <div class="common-grid">
-            <div class="workout-card">
-                <div class="workout-header bg-push">
-                    <h3>🔥 PUSH (Dorong)</h3>
-                    <p>Dada, Bahu, Triceps</p>
-                </div>
-                <div class="exercise-list">
-                    <div class="exercise-item">
-                        <div><span class="ex-name">Push Up / Bench</span><span class="ex-detail">Target: Dada</span></div>
-                        <span class="set-reps">3 x 10</span>
-                    </div>
-                    <div class="exercise-item">
-                        <div><span class="ex-name">Overhead Press</span><span class="ex-detail">Target: Bahu</span></div>
-                        <span class="set-reps">3 x 10</span>
-                    </div>
-                    <div class="exercise-item">
-                        <div><span class="ex-name">Tricep Dips</span><span class="ex-detail">Target: Tricep</span></div>
-                        <span class="set-reps">3 x Fail</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="workout-card">
-                <div class="workout-header bg-pull">
-                    <h3>⚓ PULL (Tarik)</h3>
-                    <p>Punggung, Biceps</p>
-                </div>
-                <div class="exercise-list">
-                    <div class="exercise-item">
-                        <div><span class="ex-name">Pull Up / Lat Pulldown</span><span class="ex-detail">Target: Punggung Lebar</span></div>
-                        <span class="set-reps">3 x 8</span>
-                    </div>
-                    <div class="exercise-item">
-                        <div><span class="ex-name">Dumbbell Row</span><span class="ex-detail">Target: Punggung Tebal</span></div>
-                        <span class="set-reps">3 x 12</span>
-                    </div>
-                    <div class="exercise-item">
-                        <div><span class="ex-name">Bicep Curl</span><span class="ex-detail">Target: Lengan</span></div>
-                        <span class="set-reps">3 x 12</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="workout-card">
-                <div class="workout-header bg-legs">
-                    <h3>⚡ LEGS (Kaki)</h3>
-                    <p>Paha, Bokong, Betis</p>
-                </div>
-                <div class="exercise-list">
-                    <div class="exercise-item">
-                        <div><span class="ex-name">Squat</span><span class="ex-detail">Target: Kaki Total</span></div>
-                        <span class="set-reps">4 x 10</span>
-                    </div>
-                    <div class="exercise-item">
-                        <div><span class="ex-name">Lunges</span><span class="ex-detail">Target: Paha</span></div>
-                        <span class="set-reps">3 x 12</span>
-                    </div>
-                    <div class="exercise-item">
-                        <div><span class="ex-name">Calf Raise</span><span class="ex-detail">Target: Betis</span></div>
-                        <span class="set-reps">4 x 15</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    </div>
 
     <script>
-        // --- 1. Calculator Logic ---
-        function calculateAll() {
-            const gender = document.getElementById('gender').value;
-            const weight = parseFloat(document.getElementById('weight').value);
-            const targetWeight = parseFloat(document.getElementById('target-weight').value);
-            const height = parseFloat(document.getElementById('height').value);
-            const age = parseFloat(document.getElementById('age').value);
-            const activity = parseFloat(document.getElementById('activity').value);
-
-            if (!weight || !targetWeight || !height || !age) {
-                alert("Mohon isi semua kolom data.");
-                return;
-            }
-            if (targetWeight <= weight) {
-                alert("Target Berat Badan harus lebih tinggi dari Berat Sekarang!");
-                return;
-            }
-
-            let bmr;
-            if (gender === 'male') {
-                bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;
-            } else {
-                bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161;
-            }
-
-            const tdee = bmr * activity;
-            const surplusCalories = 500; 
-            const dailyTarget = Math.round(tdee + surplusCalories);
-            const weightDiff = targetWeight - weight; 
-            const weeksToGoal = weightDiff / 0.5; 
-            const monthsToGoal = (weeksToGoal / 4).toFixed(1);
-
-            let proteinGram = Math.round(weight * 2.2); 
-            let fatGram = Math.round((dailyTarget * 0.25) / 9); 
-            let carbGram = Math.round((dailyTarget - (proteinGram * 4) - (fatGram * 9)) / 4);
-
-            document.getElementById('result-calories').innerText = dailyTarget + " kcal";
-            document.getElementById('diff-kg').innerText = weightDiff.toFixed(1);
+        function handleRegister(e) {
+            e.preventDefault(); // Mencegah reload halaman
             
-            let durationString = "";
-            if (weeksToGoal < 4) {
-                durationString = Math.round(weeksToGoal) + " Minggu";
-            } else {
-                durationString = Math.round(weeksToGoal) + " Minggu (" + monthsToGoal + " Bulan)";
-            }
-            document.getElementById('duration-text').innerText = durationString;
+            // 1. Ambil data nama
+            const name = document.getElementById('fullname').value;
+            
+            // 2. Tampilkan efek loading agar terlihat seperti sistem asli
+            const loader = document.getElementById('loader');
+            loader.style.display = 'flex';
 
-            document.getElementById('macro-p').innerText = proteinGram + "g";
-            document.getElementById('macro-c').innerText = carbGram + "g";
-            document.getElementById('macro-f').innerText = fatGram + "g";
+            // 3. Simpan nama ke LocalStorage browser
+            // Ini trik agar nanti di Dashboard nama Rendy bisa muncul otomatis
+            localStorage.setItem('memberName', name);
+            localStorage.setItem('isPremium', 'true');
 
-            document.getElementById('result-box').style.display = "block";
-            location.href = "#result-box";
-        }
-
-        // --- 2. [NEW] Allergy Filter Logic ---
-        function filterFoods() {
-            // Ambil semua checkbox yang dicentang
-            const checkboxes = document.querySelectorAll('.filter-options input[type="checkbox"]');
-            const selectedAllergies = Array.from(checkboxes)
-                                           .filter(i => i.checked)
-                                           .map(i => i.value);
-
-            // Ambil semua list makanan
-            const foodItems = document.querySelectorAll('.food-item');
-
-            foodItems.forEach(item => {
-                const itemAllergy = item.getAttribute('data-allergy');
-                
-                // Reset kondisi awal
-                item.classList.remove('restricted');
-
-                // Jika item ini memiliki label alergi, DAN alergi tersebut dicentang oleh user
-                if (itemAllergy && selectedAllergies.includes(itemAllergy)) {
-                    item.classList.add('restricted');
-                }
-            });
+            // 4. Redirect ke Dashboard setelah 2 detik
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 2000);
         }
     </script>
 </body>
