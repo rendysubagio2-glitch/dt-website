@@ -86,12 +86,21 @@
         .meal-detail { flex: 1; font-weight: 500; }
         .btn-edit { background: none; border: none; color: var(--primary); cursor: pointer; font-size: 0.8rem; }
 
-        /* --- WORKOUT LOGGER --- */
-        .input-group { margin-bottom: 10px; }
-        .input-group input { width: 100%; padding: 10px; background: #2c2c2c; border: 1px solid #444; color: white; border-radius: 5px; }
-        .btn-log { width: 100%; padding: 10px; background: var(--gold); color: black; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .log-history { margin-top: 15px; max-height: 150px; overflow-y: auto; font-size: 0.9rem; }
-        .log-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #444; }
+        /* --- STYLE UNTUK AUTO WORKOUT --- */
+        .workout-checklist { display: flex; flex-direction: column; gap: 10px; }
+        .workout-item { 
+            display: flex; align-items: center; justify-content: space-between; 
+            background: #252525; padding: 12px; border-radius: 8px; border: 1px solid #333; 
+            transition: 0.3s; 
+        }
+        .workout-item.done { border-color: var(--success); background: rgba(0, 200, 83, 0.1); opacity: 0.7; }
+        .workout-item.done span { text-decoration: line-through; color: #777; }
+        .w-info { display: flex; flex-direction: column; }
+        .w-name { font-weight: 600; color: var(--text-main); }
+        .w-rep { font-size: 0.85rem; color: var(--primary); }
+        .w-check { width: 25px; height: 25px; accent-color: var(--success); cursor: pointer; }
+        .progress-container { background: #333; height: 8px; border-radius: 4px; margin-bottom: 20px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--success); width: 0%; transition: width 0.4s ease; }
 
         /* --- SIMPLE GRAPH (CSS ONLY) --- */
         .chart-container { display: flex; align-items: flex-end; justify-content: space-between; height: 150px; padding-top: 20px; }
@@ -114,8 +123,6 @@
     <nav class="sidebar">
         <div class="logo">progressiv.id</div>
         <a href="#" class="menu-item active">📊 Overview</a>
-        <a href="#" class="menu-item">🍱 Meal Plan</a>
-        <a href="#" class="menu-item">💪 Workout Log</a>
         <a href="#" class="menu-item">⚙️ Settings</a>
         <a href="index.html" class="menu-item logout">← Logout</a>
     </nav>
@@ -123,15 +130,15 @@
     <main class="main-content">
         <header>
             <div>
-                <h2 id="welcome-msg">Welcome, Rendy!</h2>
+                <h2 id="welcome-msg">Welcome, User!</h2>
                 <p style="color:var(--text-muted)">Week 4 of Bulk Program</p>
             </div>
             <div class="user-info">
                 <div style="text-align: right;">
-                    <span style="display:block; font-weight:bold;">Rendy S.</span>
+                    <span style="display:block; font-weight:bold;">User</span>
                     <span style="font-size:0.8rem; color:var(--gold);">Premium Member</span>
                 </div>
-                <div class="avatar">RS</div>
+                <div class="avatar">U</div>
             </div>
         </header>
 
@@ -197,28 +204,25 @@
             <div class="col-right">
                 
                 <div class="card" style="border-top: 3px solid var(--primary);">
-                    <h3>Log Workout</h3>
-                    <div class="input-group">
-                        <input type="text" id="ex-name" placeholder="Nama Latihan (e.g. Bench Press)">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <h3>Today's Mission 🔥</h3>
+                        <span id="day-badge" style="background:var(--gold); color:black; padding:4px 10px; border-radius:5px; font-size:0.8rem; font-weight:bold; text-transform:uppercase;">LOADING...</span>
                     </div>
-                    <div class="input-group" style="display:flex; gap:10px;">
-                        <input type="number" id="ex-weight" placeholder="Beban (kg)">
-                        <input type="number" id="ex-reps" placeholder="Reps">
+
+                    <h4 id="workout-title" style="margin-bottom:10px; color:#fff;">Memuat Jadwal...</h4>
+
+                    <div class="progress-container">
+                        <div id="workout-progress" class="progress-fill"></div>
                     </div>
-                    <button class="btn-log" onclick="addLog()">Catat Set</button>
                     
-                    <div class="log-history" id="log-list">
-                        <div class="log-item">
-                            <span>Squat</span>
-                            <span style="color:var(--gold)">60kg x 10</span>
+                    <div id="daily-exercises" class="workout-checklist">
                         </div>
-                    </div>
                 </div>
 
                 <div class="card">
                     <h3>Coach Notes 💬</h3>
                     <p style="font-size:0.9rem; color:#ccc; font-style:italic;">
-                        "Minggu ini fokus di teknik Squat kamu ya, jangan terlalu bungkuk. Naikkan karbo sedikit di hari latihan kaki."
+                        "Fokus form daripada beban berat. Kalau checklist di atas sudah 100%, istirahat yang cukup ya!"
                     </p>
                     <div style="margin-top:10px; text-align:right;">
                         <small style="color:#666;">- Coach Ray</small>
@@ -230,27 +234,120 @@
     </main>
 
     <script>
-        /* Di file dashboard.html (Masukkan di dalam tag <script>) */
+        /* --- 1. LOGIKA DATABASE JADWAL LATIHAN --- */
+        const workoutSchedule = {
+            1: { 
+                title: "PUSH DAY (Dada/Bahu/Trisep)",
+                exercises: [
+                    { name: "Bench Press", sets: "3 Set x 10 Reps" },
+                    { name: "Overhead Press", sets: "3 Set x 10 Reps" },
+                    { name: "Tricep Pushdown", sets: "3 Set x 12 Reps" },
+                    { name: "Lateral Raise", sets: "3 Set x 15 Reps" }
+                ]
+            },
+            2: { 
+                title: "PULL DAY (Punggung/Bisep)",
+                exercises: [
+                    { name: "Pull Up / Lat Pulldown", sets: "3 Set x 8-10 Reps" },
+                    { name: "Dumbbell Row", sets: "3 Set x 12 Reps" },
+                    { name: "Face Pull", sets: "3 Set x 15 Reps" },
+                    { name: "Bicep Curl", sets: "3 Set x 12 Reps" }
+                ]
+            },
+            3: { 
+                title: "LEGS DAY (Kaki)",
+                exercises: [
+                    { name: "Squat", sets: "4 Set x 8 Reps" },
+                    { name: "Lunges", sets: "3 Set x 12 Steps" },
+                    { name: "Leg Curl", sets: "3 Set x 12 Reps" },
+                    { name: "Calf Raise", sets: "4 Set x 15 Reps" }
+                ]
+            },
+            4: { 
+                title: "REST DAY (Pemulihan)",
+                exercises: [
+                    { name: "Stretching Ringan", sets: "10 Menit" },
+                    { name: "Jalan Santai", sets: "30 Menit" }
+                ]
+            },
+            5: { 
+                title: "UPPER BODY (Atas)",
+                exercises: [
+                    { name: "Incline Bench Press", sets: "3 Set x 10 Reps" },
+                    { name: "Cable Row", sets: "3 Set x 12 Reps" },
+                    { name: "Dumbbell Shoulder Press", sets: "3 Set x 10 Reps" }
+                ]
+            },
+            6: { 
+                title: "LOWER BODY (Bawah)",
+                exercises: [
+                    { name: "Deadlift / RDL", sets: "3 Set x 8 Reps" },
+                    { name: "Leg Press", sets: "3 Set x 12 Reps" },
+                    { name: "Plank", sets: "3 Set x 1 Menit" }
+                ]
+            },
+            0: { 
+                title: "ACTIVE REST",
+                exercises: [
+                    { name: "Yoga / Mobility", sets: "20 Menit" },
+                    { name: "Tidur Siang", sets: "Opsional" }
+                ]
+            }
+        };
 
-// Cek apakah ada nama tersimpan di LocalStorage
-const savedName = localStorage.getItem('memberName');
+        /* --- 2. FUNGSI RENDER WORKOUT --- */
+        function loadDailyWorkout() {
+            const date = new Date();
+            const dayIndex = date.getDay();
+            const dayNames = ["MINGGU", "SENIN", "SELASA", "RABU", "KAMIS", "JUMAT", "SABTU"];
 
-// Jika ada, ganti tulisan "Welcome, Rendy!" dengan nama asli pendaftar
-if (savedName) {
-    // Update Judul Besar
-    document.getElementById('welcome-msg').innerText = "Welcome, " + savedName.split(" ")[0] + "!";
-    
-    // Update Info User di pojok kanan
-    const userContainer = document.querySelector('.user-info div');
-    userContainer.querySelector('span:first-child').innerText = savedName;
-    
-    // Update Inisial Avatar (Misal: RS)
-    const initials = savedName.match(/\b\w/g) || [];
-    const initialText = ((initials.shift() || '') + (initials.pop() || '')).toUpperCase();
-    document.querySelector('.avatar').innerText = initialText;
-}
+            document.getElementById('day-badge').innerText = dayNames[dayIndex];
+            const todayRoutine = workoutSchedule[dayIndex];
+            document.getElementById('workout-title').innerText = todayRoutine.title;
 
-        // 1. Simpel Toggle Habit Style
+            const container = document.getElementById('daily-exercises');
+            container.innerHTML = ""; 
+
+            todayRoutine.exercises.forEach((ex, index) => {
+                const itemHTML = `
+                    <div class="workout-item" id="w-item-${index}">
+                        <div class="w-info">
+                            <span class="w-name">${ex.name}</span>
+                            <span class="w-rep">${ex.sets}</span>
+                        </div>
+                        <input type="checkbox" class="w-check" onchange="updateProgress(this)">
+                    </div>
+                `;
+                container.innerHTML += itemHTML;
+            });
+        }
+
+        /* --- 3. FUNGSI UPDATE PROGRESS --- */
+        function updateProgress(checkbox) {
+            const item = checkbox.parentElement;
+            if(checkbox.checked) {
+                item.classList.add('done');
+            } else {
+                item.classList.remove('done');
+            }
+
+            const allCheckboxes = document.querySelectorAll('.w-check');
+            const total = allCheckboxes.length;
+            const checkedCount = document.querySelectorAll('.w-check:checked').length;
+            
+            let percent = 0;
+            if (total > 0) percent = (checkedCount / total) * 100;
+            
+            document.getElementById('workout-progress').style.width = percent + "%";
+
+            if(percent === 100) {
+                const title = document.getElementById('workout-title');
+                title.innerText = "Latihan Selesai! 🎉";
+                title.style.color = "var(--success)";
+            }
+        }
+
+        /* --- 4. INTERAKSI LAIN --- */
         const checkboxes = document.querySelectorAll('.habit-checkbox');
         checkboxes.forEach(box => {
             box.addEventListener('change', function() {
@@ -262,43 +359,30 @@ if (savedName) {
             });
         });
 
-        // 2. Workout Logger Logic
-        function addLog() {
-            const name = document.getElementById('ex-name').value;
-            const weight = document.getElementById('ex-weight').value;
-            const reps = document.getElementById('ex-reps').value;
-            const list = document.getElementById('log-list');
-
-            if(name && weight && reps) {
-                const item = document.createElement('div');
-                item.className = 'log-item';
-                item.innerHTML = `<span>${name}</span> <span style="color:var(--gold)">${weight}kg x ${reps}</span>`;
-                
-                // Add to top
-                list.insertBefore(item, list.firstChild);
-
-                // Clear input
-                document.getElementById('ex-weight').value = '';
-                document.getElementById('ex-reps').value = '';
-            } else {
-                alert("Isi data latihan dulu, Bro!");
-            }
-        }
-
-        // 3. Edit Meal Logic (Simulasi)
         function editMeal(btn) {
             const detailSpan = btn.parentElement.querySelector('.meal-detail');
             const currentText = detailSpan.innerText;
-            
             const newText = prompt("Ubah menu makanan:", currentText);
-            
             if (newText) {
                 detailSpan.innerText = newText;
-                // Visual feedback
                 detailSpan.style.color = "var(--gold)";
                 setTimeout(() => detailSpan.style.color = "var(--text-main)", 1000);
             }
         }
+
+        /* --- 5. INITIALIZE --- */
+        window.onload = function() {
+            const savedName = localStorage.getItem('memberName');
+            if (savedName) {
+                document.getElementById('welcome-msg').innerText = "Welcome, " + savedName.split(" ")[0] + "!";
+                const initials = savedName.match(/\b\w/g) || [];
+                const initialText = ((initials.shift() || '') + (initials.pop() || '')).toUpperCase();
+                document.querySelector('.avatar').innerText = initialText;
+                const userContainer = document.querySelector('.user-info div');
+                userContainer.querySelector('span:first-child').innerText = savedName;
+            }
+            loadDailyWorkout();
+        };
     </script>
 </body>
 </html>
